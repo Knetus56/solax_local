@@ -1,0 +1,45 @@
+from __future__ import annotations
+
+from homeassistant.components.sensor import SensorEntity
+from homeassistant.const import UnitOfPower, UnitOfTemperature
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import DOMAIN
+from .coordinator import SolaxDataUpdateCoordinator
+
+
+async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
+    coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    entities = [
+        SolaxSensor(coordinator, entry.entry_id, "mptt1", "Puissance MPPT 1", UnitOfPower.WATT, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "mptt2", "Puissance MPPT 2", UnitOfPower.WATT, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "mptt_total", "Puissance totale", UnitOfPower.WATT, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "prod_auj", "Production du jour", None, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "prod_total", "Production totale", None, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "temp", "Température", UnitOfTemperature.CELSIUS, "temperature"),
+        SolaxSensor(coordinator, entry.entry_id, "mode", "Mode", None, "enum"),
+        SolaxSensor(coordinator, entry.entry_id, "ip", "IP", None, "string"),
+        SolaxSensor(coordinator, entry.entry_id, "num_inverter", "Numéro de série", None, "string"),
+    ]
+    async_add_entities(entities)
+
+
+class SolaxSensor(CoordinatorEntity[SolaxDataUpdateCoordinator], SensorEntity):
+    def __init__(self, coordinator, entry_id, key, name, unit, device_class) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._attr_name = name
+        self._attr_unique_id = f"{entry_id}_{key}"
+        self._attr_has_entity_name = True
+        self._attr_device_class = device_class
+        self._attr_native_unit_of_measurement = unit
+
+    @property
+    def native_value(self):
+        return self.coordinator.data.get(self._key)
+
+    @property
+    def should_poll(self) -> bool:
+        return False

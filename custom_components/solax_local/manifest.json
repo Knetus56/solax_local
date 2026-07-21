@@ -1,0 +1,11 @@
+{
+  "domain": "solax_local",
+  "name": "SolaX Local",
+  "version": "1.0.0",
+  "documentation": "https://example.com/solax-local",
+  "requirements": [],
+  "dependencies": [],
+  "codeowners": ["@solax"],
+  "iot_class": "local_polling",
+  "config_flow": true
+}
