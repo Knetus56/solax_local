@@ -5,18 +5,23 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import CONF_INVERTER_TYPE, DOMAIN, INVERTER_TYPES
 from .coordinator import SolaxDataUpdateCoordinator
 from .solax_protocol import set_inverter_state
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([SolaxSwitch(coordinator, entry.entry_id)])
+    
+    # Get inverter model from config
+    inverter_type = entry.data.get(CONF_INVERTER_TYPE, "Unknown")
+    model = INVERTER_TYPES.get(inverter_type, "Unknown")
+    
+    async_add_entities([SolaxSwitch(coordinator, entry.entry_id, model)])
 
 
 class SolaxSwitch(CoordinatorEntity[SolaxDataUpdateCoordinator], SwitchEntity):
-    def __init__(self, coordinator, entry_id) -> None:
+    def __init__(self, coordinator, entry_id, model: str) -> None:
         super().__init__(coordinator)
         self._attr_name = "Etat"
         self._attr_unique_id = f"{entry_id}_switch"
@@ -26,7 +31,7 @@ class SolaxSwitch(CoordinatorEntity[SolaxDataUpdateCoordinator], SwitchEntity):
             "identifiers": {(DOMAIN, coordinator.serial)},
             "name": f"SolaX {coordinator.serial}",
             "manufacturer": "SolaX",
-            "model": (coordinator.data or {}).get("model"),
+            "model": model,
             "connections": {("ip", coordinator.host)},
         }
 

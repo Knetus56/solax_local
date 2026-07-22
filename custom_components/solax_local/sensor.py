@@ -7,12 +7,26 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import CONF_INVERTER_TYPE, DOMAIN, INVERTER_TYPES
 from .coordinator import SolaxDataUpdateCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    
+    # Get inverter model from config
+    inverter_type = entry.data.get(CONF_INVERTER_TYPE, "Unknown")
+    model = INVERTER_TYPES.get(inverter_type, "Unknown")
+    
+    # Create shared device_info with model
+    device_info = {
+        "identifiers": {(DOMAIN, coordinator.serial)},
+        "name": f"SolaX {coordinator.serial}",
+        "manufacturer": "SolaX",
+        "model": model,
+        "connections": {("ip", coordinator.host)},
+    }
+    
     entities = [
         SolaxSensor(
             coordinator,
@@ -22,6 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             None,
             SensorDeviceClass.TIMESTAMP,
             entity_category=EntityCategory.DIAGNOSTIC,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -31,6 +46,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -40,6 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -49,6 +66,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -58,6 +76,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfTemperature.CELSIUS,
             SensorDeviceClass.TEMPERATURE,
             state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -67,6 +86,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfEnergy.KILO_WATT_HOUR,
             SensorDeviceClass.ENERGY,
             state_class=SensorStateClass.TOTAL_INCREASING,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -76,6 +96,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             UnitOfEnergy.KILO_WATT_HOUR,
             SensorDeviceClass.ENERGY,
             state_class=SensorStateClass.TOTAL_INCREASING,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -85,6 +106,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             None,
             None,
             EntityCategory.DIAGNOSTIC,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -94,6 +116,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             None,
             None,
             EntityCategory.DIAGNOSTIC,
+            device_info=device_info,
         ),
         SolaxSensor(
             coordinator,
@@ -103,6 +126,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             None,
             None,
             EntityCategory.DIAGNOSTIC,
+            device_info=device_info,
         ),
     ]
     async_add_entities(entities)
@@ -119,6 +143,7 @@ class SolaxSensor(CoordinatorEntity[SolaxDataUpdateCoordinator], SensorEntity):
         device_class,
         entity_category: EntityCategory | None = None,
         state_class: SensorStateClass | None = None,
+        device_info: dict | None = None,
     ) -> None:
         super().__init__(coordinator)
         self._key = key
@@ -129,14 +154,7 @@ class SolaxSensor(CoordinatorEntity[SolaxDataUpdateCoordinator], SensorEntity):
         self._attr_native_unit_of_measurement = unit
         self._attr_entity_category = entity_category
         self._attr_state_class = state_class
-        # Link this entity to a single device (the inverter) using its serial
-        self._attr_device_info = {
-            "identifiers": {(DOMAIN, coordinator.serial)},
-            "name": f"SolaX {coordinator.serial}",
-            "manufacturer": "SolaX",
-            "model": (coordinator.data or {}).get("model"),
-            "connections": {("ip", coordinator.host)},
-        }
+        self._attr_device_info = device_info
 
     @property
     def native_value(self):

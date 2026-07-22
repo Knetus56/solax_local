@@ -6,17 +6,22 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from .const import CONF_INVERTER_TYPE, DOMAIN, INVERTER_TYPES
 from .coordinator import SolaxDataUpdateCoordinator
 
 
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_entities([SolaxBinarySensor(coordinator, entry.entry_id)])
+    
+    # Get inverter model from config
+    inverter_type = entry.data.get(CONF_INVERTER_TYPE, "Unknown")
+    model = INVERTER_TYPES.get(inverter_type, "Unknown")
+    
+    async_add_entities([SolaxBinarySensor(coordinator, entry.entry_id, model)])
 
 
 class SolaxBinarySensor(CoordinatorEntity[SolaxDataUpdateCoordinator], BinarySensorEntity):
-    def __init__(self, coordinator, entry_id) -> None:
+    def __init__(self, coordinator, entry_id, model: str) -> None:
         super().__init__(coordinator)
         self._attr_name = "Online"
         self._attr_unique_id = f"{entry_id}_online"
@@ -27,7 +32,7 @@ class SolaxBinarySensor(CoordinatorEntity[SolaxDataUpdateCoordinator], BinarySen
             "identifiers": {(DOMAIN, coordinator.serial)},
             "name": f"SolaX {coordinator.serial}",
             "manufacturer": "SolaX",
-            "model": (coordinator.data or {}).get("model"),
+            "model": model,
             "connections": {("ip", coordinator.host)},
         }
 
