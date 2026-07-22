@@ -43,5 +43,11 @@
     "switch": {
       "switch": "State"
     }
+  },
+  "services": {
+    "refresh_all": {
+      "name": "Refresh all inverters",
+      "description": "Force immediate update of all SolaX inverters"
+    }
   }
 }

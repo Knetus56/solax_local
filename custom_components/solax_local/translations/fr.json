@@ -43,5 +43,11 @@
     "switch": {
       "switch": "État"
     }
+  },
+  "services": {
+    "refresh_all": {
+      "name": "Actualiser tous les onduleurs",
+      "description": "Force la mise à jour immédiate de tous les onduleurs SolaX"
+    }
   }
 }
