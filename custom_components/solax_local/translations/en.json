@@ -1,0 +1,39 @@
+{
+  "title": "SolaX Local",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configure SolaX Local",
+        "description": "Add a local SolaX inverter.",
+        "data": {
+          "host": "Host",
+          "inverter_type": "Inverter type",
+          "serial": "Serial number",
+          "scan_interval": "Scan interval (seconds)"
+        },
+        "errors": {
+          "invalid_serial": "Invalid serial number. It must be alphanumeric (5-21 characters)."
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "mptt1": "MPPT Power 1",
+      "mptt2": "MPPT Power 2",
+      "mptt_total": "Total power",
+      "prod_auj": "Daily production",
+      "prod_total": "Total production",
+      "temp": "Temperature",
+      "mode": "Mode",
+      "ip": "IP",
+      "num_inverter": "Serial number"
+    },
+    "binary_sensor": {
+      "online": "Online"
+    },
+    "switch": {
+      "switch": "State"
+    }
+  }
+}
