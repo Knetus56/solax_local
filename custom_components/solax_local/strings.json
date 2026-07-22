@@ -1,0 +1,42 @@
+{
+  "title": "SolaX Local",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurer SolaX Local",
+        "description": "Ajoutez un onduleur SolaX local.",
+        "data": {
+          "host": "Hôte",
+          "inverter_type": "Type d'onduleur",
+          "serial": "Numéro de série",
+          "scan_interval": "Intervalle de scan (secondes)"
+        },
+        "error": {
+          "invalid_serial": "Numéro de série invalide. Il doit être alphanumérique (5-21 caractères)."
+        }
+      }
+    }
+  },
+  "options": {},
+  "entity": {
+    "sensor": {
+      "mptt1": "Puissance MPPT 1",
+      "mptt2": "Puissance MPPT 2",
+      "mptt_total": "Puissance totale",
+      "prod_auj": "Production du jour",
+      "prod_total": "Production totale",
+      "temp": "Température",
+      "mode": "Mode",
+      "ip": "IP",
+      "num_inverter": "Numéro de série"
+    },
+    "binary_sensor": {
+      "online": "En ligne"
+    },
+    "switch": {
+      "switch": "État"
+    }
+  },
+  "device_automation": {},
+  "services": {}
+}
