@@ -19,9 +19,9 @@
   },
   "entity": {
     "sensor": {
-      "mptt1": "Puissance MPPT 1",
-      "mptt2": "Puissance MPPT 2",
-      "mptt_total": "Puissance totale",
+      "mppt1": "Puissance MPPT 1",
+      "mppt2": "Puissance MPPT 2",
+      "mppt_total": "Puissance totale",
       "prod_auj": "Production du jour",
       "prod_total": "Production totale",
       "temp": "Température",
