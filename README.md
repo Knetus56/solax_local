@@ -83,36 +83,6 @@ Les entités suivantes sont masquées par défaut (onglet Avancé) :
 
 Pour les afficher : **Paramètres** > **Appareils et services** > Sélectionner le device > **Afficher les entités masquées**
 
-## 📊 Cas d'usage
-
-### Automation - Alerte production
-
-```yaml
-automation:
-  - alias: "Alerte - Production arrêtée"
-    trigger:
-      platform: numeric_state
-      entity_id: sensor.solax_puissance_mppt_total
-      below: 100
-      for:
-        minutes: 5
-    action:
-      service: notify.notify
-      data:
-        message: "⚠️ Onduleur SolaX en mode WaitMode"
-```
-
-### Template - Production journalière en €
-
-```yaml
-template:
-  - sensor:
-      - name: "Revenus du jour"
-        unit_of_measurement: "€"
-        state: "{{ (states('sensor.solax_production_du_jour') | float(0) * 0.25) | round(2) }}"
-```
-
-## 🐛 Dépannage
 
 ### Les capteurs affichent "Inconnu"
 
@@ -132,20 +102,7 @@ template:
 - Cela signifie que le modèle sélectionné n'est pas reconnu
 - Vérifier la sélection lors de la configuration
 
-## 📝 Logs de débogage
 
-Pour activer les logs détaillés, ajouter dans `configuration.yaml` :
-
-```yaml
-logger:
-  logs:
-    custom_components.solax_local: debug
-```
-
-## 🤝 Support
-
-- **Issues** : [GitHub Issues](https://github.com/Knetus56/solax_local/issues)
-- **Discussions** : [GitHub Discussions](https://github.com/Knetus56/solax_local/discussions)
 
 ## 📦 Versions
 
@@ -157,8 +114,4 @@ Ce projet est sous licence [MIT](LICENSE)
 
 ## 🙏 Remerciements
 
-Inspiré par les projets existants de monitoring SolaX et basé sur la documentation du protocole HTTP SolaX.
-
----
-
-**Note** : Ce projet est développé indépendamment et n'est pas affilié à SolaX Power.
+- https://github.com/CurlyMoo grace a son reverse ici : https://github.com/squishykid/solax/issues/191
