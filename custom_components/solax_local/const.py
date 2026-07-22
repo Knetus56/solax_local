@@ -2,7 +2,7 @@ DOMAIN = "solax_local"
 CONF_HOST = "host"
 CONF_SERIAL = "serial"
 CONF_SCAN_INTERVAL = "scan_interval"
-DEFAULT_SCAN_INTERVAL = 60
+DEFAULT_SCAN_INTERVAL = 300
 
 # Config flow constants
 CONF_INVERTER_TYPE = "inverter_type"

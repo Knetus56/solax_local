@@ -14,16 +14,10 @@ from .coordinator import SolaxDataUpdateCoordinator
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = [
-
-
-
-    
-
-
-
         SolaxSensor(coordinator, entry.entry_id, "mptt1", "Puissance MPPT 1", UnitOfPower.WATT, "power"),
         SolaxSensor(coordinator, entry.entry_id, "mptt2", "Puissance MPPT 2", UnitOfPower.WATT, "power"),
         SolaxSensor(coordinator, entry.entry_id, "mptt_total", "Puissance totale", UnitOfPower.WATT, "power"),
+        SolaxSensor(coordinator, entry.entry_id, "temp", "Température", UnitOfTemperature.CELSIUS, "temperature"),
         SolaxSensor(
             coordinator,
             entry.entry_id,
@@ -42,7 +36,6 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             SensorDeviceClass.ENERGY,
             state_class=SensorStateClass.TOTAL_INCREASING,
         ),
-        SolaxSensor(coordinator, entry.entry_id, "temp", "Température", UnitOfTemperature.CELSIUS, "temperature"),
         SolaxSensor(
             coordinator,
             entry.entry_id,
