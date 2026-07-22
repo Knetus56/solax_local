@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
-from homeassistant.const import UnitOfEnergy, UnitOfPower, UnitOfTemperature
+from homeassistant.const import UnitOfEnergy, UnitOfPower, UnitOfTemperature, UnitOfElectricCurrent, UnitOfElectricPotential, UnitOfFrequency
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -41,7 +41,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
         SolaxSensor(
             coordinator,
             entry.entry_id,
-            "mppt1",
+            "mppt1_puissance",
             "Puissance MPPT 1",
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
@@ -51,7 +51,27 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
         SolaxSensor(
             coordinator,
             entry.entry_id,
-            "mppt2",
+            "mppt1_voltage",
+            "Tension MPPT 1",
+            UnitOfElectricPotential.VOLT,
+            SensorDeviceClass.VOLTAGE,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt1_intensite",
+            "Courant MPPT 1",
+            UnitOfElectricCurrent.AMPERE,
+            SensorDeviceClass.CURRENT,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt2_puissance",
             "Puissance MPPT 2",
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
@@ -61,8 +81,68 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
         SolaxSensor(
             coordinator,
             entry.entry_id,
+            "mppt2_voltage",
+            "Tension MPPT 2",
+            UnitOfElectricPotential.VOLT,
+            SensorDeviceClass.VOLTAGE,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt2_intensite",
+            "Courant MPPT 2",
+            UnitOfElectricCurrent.AMPERE,
+            SensorDeviceClass.CURRENT,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "inverter_voltage",
+            "Tension onduleur",
+            UnitOfElectricPotential.VOLT,
+            SensorDeviceClass.VOLTAGE,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "inverter_intensite",
+            "Courant onduleur",
+            UnitOfElectricCurrent.AMPERE,
+            SensorDeviceClass.CURRENT,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "inverter_puissance",
+            "Puissance onduleur",
+            UnitOfPower.WATT,
+            SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "inverter_freq",
+            "Fréquence onduleur",
+            UnitOfFrequency.HERTZ,
+            None,
+            state_class=SensorStateClass.MEASUREMENT,
+            device_info=device_info,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
             "mppt_total",
-            "Puissance totale",
+            "Puissance totale MPPT",
             UnitOfPower.WATT,
             SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,

@@ -19,15 +19,24 @@
   },
   "entity": {
     "sensor": {
-      "mppt1": "MPPT Power 1",
-      "mppt2": "MPPT Power 2",
-      "mppt_total": "Total power",
+      "mppt1_puissance": "MPPT Power 1",
+      "mppt1_voltage": "MPPT Voltage 1",
+      "mppt1_intensite": "MPPT Current 1",
+      "mppt2_puissance": "MPPT Power 2",
+      "mppt2_voltage": "MPPT Voltage 2",
+      "mppt2_intensite": "MPPT Current 2",
+      "inverter_voltage": "Inverter Voltage",
+      "inverter_intensite": "Inverter Current",
+      "inverter_puissance": "Inverter Power",
+      "inverter_freq": "Inverter Frequency",
+      "mppt_total": "Total MPPT Power",
       "prod_auj": "Daily production",
       "prod_total": "Total production",
       "temp": "Temperature",
       "mode": "Mode",
       "ip": "IP",
-      "num_inverter": "Serial number"
+      "num_inverter": "Serial number",
+      "last_update": "Last update"
     },
     "binary_sensor": {
       "online": "Online"

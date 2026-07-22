@@ -29,8 +29,16 @@ def _offline_state(host: str, serial: str, mode: str = "Offline") -> dict[str, A
         "online": False,
         "status": 0,
         "mode": mode,
-        "mppt1": 0,
-        "mppt2": 0,
+        "mppt1_puissance": 0,
+        "mppt2_puissance": 0,
+        "mppt1_voltage": 0.0,
+        "mppt2_voltage": 0.0,
+        "mppt1_intensite": 0.0,
+        "mppt2_intensite": 0.0,
+        "inverter_voltage": 0.0,
+        "inverter_intensite": 0.0,
+        "inverter_puissance": 0,
+        "inverter_freq": 0.0,
         "mppt_total": 0,
         "prod_auj": 0.0,
         "prod_total": 0.0,
@@ -128,12 +136,22 @@ def parse_data(payload: str, host: str, serial: str) -> dict[str, Any]:
     mode_names = {0: "WaitMode", 1: "CheckMode", 2: "NormalMode"}
     mode_name = mode_names.get(mode, "Unknown")
 
+
+
     result = {
         "online": True,
         "status": status,
         "mode": mode_name,
-        "mppt1": _u16(decoded, 86),
-        "mppt2": _u16(decoded, 88),
+        "mppt1_puissance": _u16(decoded, 86),
+        "mppt2_puissance": _u16(decoded, 88),
+        "mppt1_voltage": _u16(decoded, 78)/ 10.0,
+        "mppt2_voltage": _u16(decoded, 80)/ 10.0,
+        "mppt1_intensite": _u16(decoded, 82)/ 10.0,
+        "mppt2_intensite": _u16(decoded, 84)/ 10.0,        
+        "inverter_voltage": _u16(decoded, 70) / 10.0,
+        "inverter_intensite": _u16(decoded, 72) / 10.0,
+        "inverter_puissance": _u16(decoded, 74),
+        "inverter_freq": _u16(decoded, 76) / 100.0,    
         "mppt_total": _u16(decoded, 74),
         "prod_auj": round(_u16(decoded, 96) / 10.0, 2),
         "prod_total": round(_u32(decoded, 92) / 10.0, 2),

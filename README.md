@@ -8,7 +8,7 @@ Une intégration [Home Assistant](https://www.home-assistant.io/) pour contrôle
 - 🔄 **Contrôle de l'onduleur** : Allumage/extinction via switch
 - 📈 **Tracking de production** : Production du jour et cumulative
 - 🕐 **Historique** : Timestamp de la dernière mise à jour
-- 🌍 **Support multi-inverter** : X1 Micro 2-in-1 et autres
+- 🌍 **Support multi-inverter** : X1 Micro 2-in-1
 - 🔐 **Connexion locale** : Pas de cloud, entièrement en local
 - 🇫🇷 **Interface localisée** : Français et anglais
 
@@ -16,8 +16,16 @@ Une intégration [Home Assistant](https://www.home-assistant.io/) pour contrôle
 
 | Capteur | Description | Unité |
 |---------|-------------|-------|
-| `mppt1` | Puissance MPPT 1 | W |
-| `mppt2` | Puissance MPPT 2 | W |
+| `mppt1_puissance` | Puissance MPPT 1 | W |
+| `mppt1_voltage` | Tension MPPT 1 | V |
+| `mppt1_intensite` | Courant MPPT 1 | A |
+| `mppt2_puissance` | Puissance MPPT 2 | W |
+| `mppt2_voltage` | Tension MPPT 2 | V |
+| `mppt2_intensite` | Courant MPPT 2 | A |
+| `inverter_voltage` | Tension de sortie onduleur | V |
+| `inverter_intensite` | Courant de sortie onduleur | A |
+| `inverter_puissance` | Puissance de sortie onduleur | W |
+| `inverter_freq` | Fréquence onduleur | Hz |
 | `mppt_total` | Puissance totale MPPT | W |
 | `temp` | Température de l'onduleur | °C |
 | `prod_auj` | Production du jour | kWh |
@@ -101,7 +109,6 @@ Pour les afficher : **Paramètres** > **Appareils et services** > Sélectionner 
 
 - Cela signifie que le modèle sélectionné n'est pas reconnu
 - Vérifier la sélection lors de la configuration
-
 
 
 ## 📦 Versions
