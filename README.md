@@ -113,6 +113,7 @@ Pour les afficher : **Paramètres** > **Appareils et services** > Sélectionner 
 
 ## 📦 Versions
 
+- **v1.2.0** (2026-07-22) - Ajout des capteurs tension/courant MPPT et métriques onduleur
 - **v1.1.0** (2026-07-22) - Fix clés MPPT et initialisation du modèle
 
 ## 📄 Licence
