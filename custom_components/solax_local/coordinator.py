@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 from homeassistant.core import HomeAssistant
@@ -26,6 +26,8 @@ class SolaxDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
-            return await self.hass.async_add_executor_job(fetch_inverter_state, self.host, self.serial)
+            data = await self.hass.async_add_executor_job(fetch_inverter_state, self.host, self.serial)
+            data["last_update"] = datetime.now(timezone.utc)
+            return data
         except Exception as err:  # pragma: no cover - defensive path
             raise UpdateFailed(f"Unable to fetch SolaX data: {err}") from err

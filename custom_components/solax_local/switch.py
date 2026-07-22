@@ -32,6 +32,8 @@ class SolaxSwitch(CoordinatorEntity[SolaxDataUpdateCoordinator], SwitchEntity):
 
     @property
     def is_on(self) -> bool:
+        if self.coordinator.data is None:
+            return False
         return bool(self.coordinator.data.get("status", 0))
 
     async def async_turn_on(self, **kwargs) -> None:

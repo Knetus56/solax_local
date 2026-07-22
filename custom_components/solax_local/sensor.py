@@ -14,10 +14,51 @@ from .coordinator import SolaxDataUpdateCoordinator
 async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddEntitiesCallback) -> None:
     coordinator: SolaxDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
     entities = [
-        SolaxSensor(coordinator, entry.entry_id, "mptt1", "Puissance MPPT 1", UnitOfPower.WATT, "power"),
-        SolaxSensor(coordinator, entry.entry_id, "mptt2", "Puissance MPPT 2", UnitOfPower.WATT, "power"),
-        SolaxSensor(coordinator, entry.entry_id, "mptt_total", "Puissance totale", UnitOfPower.WATT, "power"),
-        SolaxSensor(coordinator, entry.entry_id, "temp", "Température", UnitOfTemperature.CELSIUS, "temperature"),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "last_update",
+            "Dernière requête",
+            None,
+            SensorDeviceClass.TIMESTAMP,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt1",
+            "Puissance MPPT 1",
+            UnitOfPower.WATT,
+            SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt2",
+            "Puissance MPPT 2",
+            UnitOfPower.WATT,
+            SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "mppt_total",
+            "Puissance totale",
+            UnitOfPower.WATT,
+            SensorDeviceClass.POWER,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
+        SolaxSensor(
+            coordinator,
+            entry.entry_id,
+            "temp",
+            "Température",
+            UnitOfTemperature.CELSIUS,
+            SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+        ),
         SolaxSensor(
             coordinator,
             entry.entry_id,
@@ -42,7 +83,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             "mode",
             "Mode",
             None,
-            "enum",
+            None,
             EntityCategory.DIAGNOSTIC,
         ),
         SolaxSensor(
@@ -51,7 +92,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             "ip",
             "IP",
             None,
-            "string",
+            None,
             EntityCategory.DIAGNOSTIC,
         ),
         SolaxSensor(
@@ -60,7 +101,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             "num_inverter",
             "Numéro de série",
             None,
-            "string",
+            None,
             EntityCategory.DIAGNOSTIC,
         ),
     ]
@@ -99,6 +140,8 @@ class SolaxSensor(CoordinatorEntity[SolaxDataUpdateCoordinator], SensorEntity):
 
     @property
     def native_value(self):
+        if self.coordinator.data is None:
+            return None
         return self.coordinator.data.get(self._key)
 
     @property

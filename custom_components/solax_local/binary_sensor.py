@@ -33,6 +33,8 @@ class SolaxBinarySensor(CoordinatorEntity[SolaxDataUpdateCoordinator], BinarySen
 
     @property
     def is_on(self) -> bool:
+        if self.coordinator.data is None:
+            return False
         return bool(self.coordinator.data.get("online", False))
 
     @property
