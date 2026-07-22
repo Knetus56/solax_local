@@ -39,6 +39,24 @@ Une intégration [Home Assistant](https://www.home-assistant.io/) pour contrôle
 - **Binary Sensor** : État en ligne/hors ligne
 - **Switch** : Allumage/extinction de l'onduleur
 
+## 🔄 Services
+
+### Actualiser tous les onduleurs
+
+Service: `solax_local.refresh_all`
+
+Force la mise à jour immédiate de tous les onduleurs configurés sans attendre l'intervalle de scan.
+
+**Utilisation dans une automatisation** :
+```yaml
+service: solax_local.refresh_all
+```
+
+**Ou dans les outils de développement** :
+1. **Outils de développement** > **Services**
+2. Sélectionner `SolaX Local: Refresh all inverters`
+3. Cliquer **Exécuter**
+
 ## 🚀 Installation
 
 ### Prérequis
@@ -112,6 +130,7 @@ Pour les afficher : **Paramètres** > **Appareils et services** > Sélectionner 
 
 ## 📦 Versions
 
+- **v1.2.1** (2026-07-22) - Ajout du service refresh_all pour actualiser tous les onduleurs
 - **v1.2.0** (2026-07-22) - Ajout des capteurs tension/courant MPPT et métriques onduleur
 - **v1.1.0** (2026-07-22) - Fix clés MPPT et initialisation du modèle
 
