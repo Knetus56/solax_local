@@ -21,6 +21,14 @@ class SolaxSwitch(CoordinatorEntity[SolaxDataUpdateCoordinator], SwitchEntity):
         self._attr_name = "Etat"
         self._attr_unique_id = f"{entry_id}_switch"
         self._attr_has_entity_name = True
+        # Attach entity to inverter device by serial
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, coordinator.serial)},
+            "name": f"SolaX {coordinator.serial}",
+            "manufacturer": "SolaX",
+            "model": (coordinator.data or {}).get("model"),
+            "connections": {("ip", coordinator.host)},
+        }
 
     @property
     def is_on(self) -> bool:

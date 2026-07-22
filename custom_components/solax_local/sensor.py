@@ -35,6 +35,14 @@ class SolaxSensor(CoordinatorEntity[SolaxDataUpdateCoordinator], SensorEntity):
         self._attr_has_entity_name = True
         self._attr_device_class = device_class
         self._attr_native_unit_of_measurement = unit
+        # Link this entity to a single device (the inverter) using its serial
+        self._attr_device_info = {
+            "identifiers": {(DOMAIN, coordinator.serial)},
+            "name": f"SolaX {coordinator.serial}",
+            "manufacturer": "SolaX",
+            "model": (coordinator.data or {}).get("model"),
+            "connections": {("ip", coordinator.host)},
+        }
 
     @property
     def native_value(self):
