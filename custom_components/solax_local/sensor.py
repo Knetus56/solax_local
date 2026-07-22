@@ -36,7 +36,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             "IP",
             None,
             "string",
-            EntityCategory.CONFIG,
+            EntityCategory.DIAGNOSTIC,
         ),
         SolaxSensor(
             coordinator,
@@ -45,7 +45,7 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
             "Numéro de série",
             None,
             "string",
-            EntityCategory.CONFIG,
+            EntityCategory.DIAGNOSTIC,
         ),
     ]
     async_add_entities(entities)
