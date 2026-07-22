@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import base64
+import logging
 from typing import Any
 from urllib import error, request
+
+_LOGGER = logging.getLogger(__name__)
 
 
 def crc16(data: bytes, length: int) -> tuple[int, int]:
@@ -19,6 +22,22 @@ def crc16(data: bytes, length: int) -> tuple[int, int]:
                 reg = (reg << 1) & mask
 
     return (reg >> 8) & 0xFF, reg & 0xFF
+
+
+def _offline_state(host: str, serial: str, mode: str = "Offline") -> dict[str, Any]:
+    return {
+        "online": False,
+        "status": 0,
+        "mode": mode,
+        "mptt1": 0,
+        "mptt2": 0,
+        "mptt_total": 0,
+        "prod_auj": 0.0,
+        "prod_total": 0.0,
+        "temp": 0,
+        "ip": host,
+        "num_inverter": serial,
+    }
 
 
 def build_sys_packet(inv: str, on: bool) -> str:
@@ -46,6 +65,7 @@ def build_sys_packet(inv: str, on: bool) -> str:
     buff[74] = b1
     buff[75] = b2
 
+    _LOGGER.debug("build_sys_packet: serial=%s on=%s crc=(%02X,%02X)", inv, on, b1, b2)
     return base64.b64encode(bytes(buff)).decode("ascii")
 
 
@@ -68,6 +88,7 @@ def build_data_packet(inv: str) -> str:
     buff[67] = b1
     buff[68] = b2
 
+    _LOGGER.debug("build_data_packet: serial=%s crc=(%02X,%02X)", inv, b1, b2)
     return base64.b64encode(bytes(buff)).decode("ascii")
 
 
@@ -88,54 +109,26 @@ def _decode_payload(payload: str) -> bytes:
 
 def parse_data(payload: str, host: str, serial: str) -> dict[str, Any]:
     decoded = _decode_payload(payload)
+    _LOGGER.debug("parse_data: decoded length=%d", len(decoded))
+
     if len(decoded) < 112:
-        return {
-            "online": False,
-            "status": 0,
-            "mode": "Unknown",
-            "mptt1": 0,
-            "mptt2": 0,
-            "mptt_total": 0,
-            "prod_auj": 0.0,
-            "prod_total": 0.0,
-            "temp": 0,
-            "ip": host,
-            "num_inverter": serial,
-        }
+        _LOGGER.debug("parse_data: payload too short (%d bytes), marking offline", len(decoded))
+        return _offline_state(host, serial, "Unknown")
 
     serial_bytes = decoded[8:22]
     serial_inverter = serial_bytes.decode("ascii", errors="ignore")
+    _LOGGER.debug("parse_data: packet type=0x%02X serial_in_packet=%r expected=%r", decoded[2], serial_inverter, serial)
+
     if decoded[2] != 0x70 or serial_inverter != serial:
-        return {
-            "online": False,
-            "status": 0,
-            "mode": "Unknown",
-            "mptt1": 0,
-            "mptt2": 0,
-            "mptt_total": 0,
-            "prod_auj": 0.0,
-            "prod_total": 0.0,
-            "temp": 0,
-            "ip": host,
-            "num_inverter": serial,
-        }
+        _LOGGER.debug("parse_data: packet mismatch (type=0x%02X serial=%r), marking offline", decoded[2], serial_inverter)
+        return _offline_state(host, serial, "Unknown")
 
     mode = _u16(decoded, 90)
-    if mode == 2:
-        status = 1
-    else:
-        status = 0
+    status = 1 if mode == 2 else 0
+    mode_names = {0: "WaitMode", 1: "CheckMode", 2: "NormalMode"}
+    mode_name = mode_names.get(mode, "Unknown")
 
-    if mode == 0:
-        mode_name = "WaitMode"
-    elif mode == 1:
-        mode_name = "CheckMode"
-    elif mode == 2:
-        mode_name = "NormalMode"
-    else:
-        mode_name = "Unknown"
-
-    return {
+    result = {
         "online": True,
         "status": status,
         "mode": mode_name,
@@ -148,6 +141,8 @@ def parse_data(payload: str, host: str, serial: str) -> dict[str, Any]:
         "ip": host,
         "num_inverter": serial,
     }
+    _LOGGER.debug("parse_data: result=%s", result)
+    return result
 
 
 def fetch_inverter_state(host: str, serial: str) -> dict[str, Any]:
@@ -155,27 +150,18 @@ def fetch_inverter_state(host: str, serial: str) -> dict[str, Any]:
     req = request.Request(f"http://{host}", data=payload.encode("ascii"), method="POST")
     req.add_header("Content-Type", "application/octet-stream")
 
+    _LOGGER.debug("fetch_inverter_state: querying host=%s serial=%s", host, serial)
     try:
         with request.urlopen(req, timeout=5) as response:
             body = response.read().decode("ascii", errors="ignore")
+            _LOGGER.debug("fetch_inverter_state: HTTP %d body_len=%d", response.status, len(body))
             if response.status == 200 and len(body) >= 150:
                 return parse_data(body.replace("\n", ""), host, serial)
-    except (error.URLError, error.HTTPError, TimeoutError, ValueError):
-        pass
+            _LOGGER.debug("fetch_inverter_state: response too short or bad status, marking offline")
+    except (error.URLError, error.HTTPError, TimeoutError, ValueError) as exc:
+        _LOGGER.debug("fetch_inverter_state: request failed: %s", exc)
 
-    return {
-        "online": False,
-        "status": 0,
-        "mode": "Offline",
-        "mptt1": 0,
-        "mptt2": 0,
-        "mptt_total": 0,
-        "prod_auj": 0.0,
-        "prod_total": 0.0,
-        "temp": 0,
-        "ip": host,
-        "num_inverter": serial,
-    }
+    return _offline_state(host, serial)
 
 
 def set_inverter_state(host: str, serial: str, on: bool) -> bool:
@@ -183,8 +169,12 @@ def set_inverter_state(host: str, serial: str, on: bool) -> bool:
     req = request.Request(f"http://{host}", data=payload.encode("ascii"), method="POST")
     req.add_header("Content-Type", "application/octet-stream")
 
+    _LOGGER.debug("set_inverter_state: host=%s serial=%s on=%s", host, serial, on)
     try:
         with request.urlopen(req, timeout=5) as response:
-            return response.status == 200
-    except (error.URLError, error.HTTPError, TimeoutError, ValueError):
+            success = response.status == 200
+            _LOGGER.debug("set_inverter_state: HTTP %d success=%s", response.status, success)
+            return success
+    except (error.URLError, error.HTTPError, TimeoutError, ValueError) as exc:
+        _LOGGER.debug("set_inverter_state: request failed: %s", exc)
         return False
