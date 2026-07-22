@@ -141,16 +141,6 @@ async def async_setup_entry(hass: HomeAssistant, entry, async_add_entities: AddE
         SolaxSensor(
             coordinator,
             entry.entry_id,
-            "mppt_total",
-            "Puissance totale MPPT",
-            UnitOfPower.WATT,
-            SensorDeviceClass.POWER,
-            state_class=SensorStateClass.MEASUREMENT,
-            device_info=device_info,
-        ),
-        SolaxSensor(
-            coordinator,
-            entry.entry_id,
             "temp",
             "Température",
             UnitOfTemperature.CELSIUS,

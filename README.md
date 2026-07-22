@@ -26,7 +26,6 @@ Une intégration [Home Assistant](https://www.home-assistant.io/) pour contrôle
 | `inverter_intensite` | Courant de sortie onduleur | A |
 | `inverter_puissance` | Puissance de sortie onduleur | W |
 | `inverter_freq` | Fréquence onduleur | Hz |
-| `mppt_total` | Puissance totale MPPT | W |
 | `temp` | Température de l'onduleur | °C |
 | `prod_auj` | Production du jour | kWh |
 | `prod_total` | Production totale cumulative | kWh |

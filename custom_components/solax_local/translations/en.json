@@ -29,7 +29,6 @@
       "inverter_intensite": "Inverter Current",
       "inverter_puissance": "Inverter Power",
       "inverter_freq": "Inverter Frequency",
-      "mppt_total": "Total MPPT Power",
       "prod_auj": "Daily production",
       "prod_total": "Total production",
       "temp": "Temperature",

@@ -29,7 +29,6 @@
       "inverter_intensite": "Courant onduleur",
       "inverter_puissance": "Puissance onduleur",
       "inverter_freq": "Fréquence onduleur",
-      "mppt_total": "Puissance totale MPPT",
       "prod_auj": "Production du jour",
       "prod_total": "Production totale",
       "temp": "Température",
